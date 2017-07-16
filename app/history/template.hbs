@@ -1,0 +1,12 @@
+<div id="history">
+  <nav>
+    <span {{action 'sendTelemetry'}}>
+      <a href="#" class="freshtab-button"></a>
+    </span>
+    {{#link-to 'history.index' class="history-button"}}
+    {{/link-to}}
+  </nav>
+  <div class="history">
+    {{liquid-outlet}}
+  </div>
+</div>
