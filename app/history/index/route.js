@@ -1,3 +1,4 @@
+/*eslint no-console: ["error", { allow: ["warn", "error"] }] */
 import Ember from "ember";
 
 const VisitsProxy = Ember.ArrayProxy.extend({
@@ -25,7 +26,6 @@ const VisitsProxy = Ember.ArrayProxy.extend({
     this.startLoadingAt = Date.now();
     this.set('isLoading', true);
     const history = this.get('history');
-
     return history.search(query, from, to).then(({sessions, history}) => {
       this.get('content').addObjects(sessions);
       this.setProperties({
@@ -86,7 +86,7 @@ export default Ember.Route.extend({
       to,
       cliqz,
     });
-    model.load();
+    model.load().catch(console.error);
     return model;
   },
   actions: {
