@@ -30,6 +30,17 @@ a:hover, a:active, a:focus {
   display: none;
 }
 
+li {
+  list-style: none;
+}
+
+/*
+ * TODO: too generic
+ */
+input, label {
+  height: 34px;
+}
+
 .loading {
   text-align: center;
 
