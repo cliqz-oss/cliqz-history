@@ -10,7 +10,11 @@
   {{#if logoclass}}
     <div>
       <span class="domain" {{action 'sendTelemetry' 'header_url'}}>
-        {{model.contact.domain}}
+        {{#if isCliqz}}
+          Cliqz
+        {{else}}
+          {{model.contact.domain}}
+        {{/if}}
       </span>
     </div>
   {{/if}}
