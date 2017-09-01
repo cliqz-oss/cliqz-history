@@ -1,13 +1,8 @@
----
 language: node_js
 node_js:
-  - "6"
-
+  - '6'
 sudo: false
-
-cache:
-  directories:
-    - $HOME/.npm
+cache: yarn
 
 before_install:
   - npm config set spin false
@@ -15,7 +10,21 @@ before_install:
   - phantomjs --version
 
 install:
-  - npm install
+  - yarn
 
 script:
   - npm test
+
+before_deploy:
+  - npm run build
+  - npm pack
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  on:
+    repo: cliqz-oss/cliqz-history
+    tags: true
+  api_key:
+    secure: Pj4/lXP0uj54XsUbS9w6z3A4Ww+3lkzlX2QoSrhtZZSGzgEpAzwNSVZxMrOQINtt6WPH0Zj+maky9MqkhSakFuW9LTLIsQ0y8tq5F6E9j2AGe3vy+N4n2VsmdAhqLdecQQg+KS7iX0804BTG4fOLc64eluEjCw4elbeYk0DcqNrktq3SxfiK2cG2bcScfmQMbBDhwDJcdMg9ICGxZAymKYDnCHb4wDrc/2IhxgRSYbtJ5GUHU/tLK1Tu0/var9K58dKFbRx1L4UDrmm0sViXYCTgaq7+HCfnvN8L1Is4cO0EdTgvfh0WgtH6M36fJ+o8Sgf0UEdzFX9XUhnq47qg3RdBvx5TRG7uUU7m3KXUnuXfGc/9pCdqdIZjs45soJM13WLcxdQtn/HvQ9vibTxKNnaQNKmjAvaP3oK+tO2ECjlpP0My8asXi24SqIj9D3qcX4GK8zSkbg3uAiph88aKl6Af0KYwkW2wtRZPUkgoDZcNPJtJagM5jyJ/zP2GKVPGOQmtJEnTIlfqqIq2XRkJmMRTtLQXeikU55oIsipDRvkmTc0Ab9RRDtN32KA+xNrhhX8E6JOv/yiq/yw+FPc+sVUiK1jV4h6UBGjYBFmqa4w2SFsx5vBFry/G4li5Z//D6Bc7kaCLpjt4i8a+liSCeTmKJUWiPe3h3o2rPdxda80=
+  file: cliqz-history-$TRAVIS_TAG.tgz

@@ -10,7 +10,7 @@
   },
   "repository": "",
   "scripts": {
-    "build": "ember build",
+    "build": "ember build --environment production",
     "start": "ember server -p 3000",
     "test": "ember test"
   },
