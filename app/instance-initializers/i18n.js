@@ -1,3 +1,4 @@
+/* global chrome */
 export function initialize(appInstance) {
   const i18n = appInstance.lookup('service:i18n');
   const lang = typeof chrome !== 'object' ? 'en' :
