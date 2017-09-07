@@ -24,7 +24,7 @@ export default Ember.Service.extend({
     this.showHistoryDeletionPopup = historyProxy.showHistoryDeletionPopup;
     this.sendUserFeedback = historyProxy.sendUserFeedback;
     this.getHistory = historyProxy.getHistory;
-    this.openNewTab = historyProxy.openNewTab;
+    this.openNewTab = historyProxy.newTab.bind(historyProxy, true);
     this.getQuery = historyProxy.getQuery;
     this.getQueries = historyProxy.getQueries;
     this.openUrl = historyProxy.openUrl;

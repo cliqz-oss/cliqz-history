@@ -46,6 +46,7 @@ $color-active-border: #0078CA;
       padding: 0px;
       height: 24px;
       display: block;
+      cursor: pointer;
 
       &.freshtab-button {
         background: url('../assets/images/Home White.svg') no-repeat center;
@@ -574,6 +575,7 @@ $color-active-border: #0078CA;
               height: 36px;
               border: none;
               background-position: center bottom 8px;
+              cursor: pointer;
 
               background-size: 16px 16px;
 
@@ -603,6 +605,7 @@ $color-active-border: #0078CA;
           position: absolute;
           top: 0;
           right: -30px;
+          cursor: pointer;
 
           background:url('./images/trash-session.svg') no-repeat;
           width: 20px;

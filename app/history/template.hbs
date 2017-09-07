@@ -1,7 +1,7 @@
 <div id="history">
   <nav>
     <span {{action 'sendTelemetry'}}>
-      <a href="resource://cliqz/freshtab/home.html" class="freshtab-button"></a>
+      <a {{action 'openFreshTab'}} class="freshtab-button"></a>
     </span>
     {{#link-to 'history.index' class="history-button"}}
     {{/link-to}}

@@ -99,6 +99,9 @@ export default Ember.Route.extend({
       });
       this.get('cliqz').showHistoryDeletionPopup();
     },
+    openFreshTab() {
+      this.get('cliqz').openNewTab();
+    },
     sendTelemetry(name) {
       switch(name) {
         case 'home-click-history':
