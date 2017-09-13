@@ -12,6 +12,9 @@ export default Model.extend({
   tabIndex: attr(),
   lastVisitedAt: attr(),
   meta: attr(),
+  isCliqz: Ember.computed("url", function() {
+    return this.getWithDefault('url', '').indexOf('https://cliqz.com/search?q=') === 0;
+  }),
 
   contact: belongsTo('history-contact'),
   session: belongsTo('session'),
