@@ -26,6 +26,7 @@ export default Ember.Component.extend({
 
   href: Ember.computed.alias('model.url'),
   title: Ember.computed.alias('model.title'),
+  isCliqz: Ember.computed.alias('model.isCliqz'),
 
   keyword: Ember.computed('model.url', function () {
     const url = this.get('model.url');
@@ -42,10 +43,6 @@ export default Ember.Component.extend({
       const queries = searchParams.getAll('q');
       return queries[queries.length-1];
     }
-  }),
-
-  isCliqz: Ember.computed('model.url', function () {
-    return this.getWithDefault('model.url', '').indexOf('https://cliqz.com/search?q=') === 0;
   }),
 
   mouseEnter() {
