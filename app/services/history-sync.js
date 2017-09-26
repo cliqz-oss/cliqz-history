@@ -282,8 +282,7 @@ export default Ember.Service.extend({
     const session = visit.get('session.content');
     this.get('urlsToDelete').addObject(visit.get('url'));
     visit.unloadRecord();
-    if (session.get('visits.length') === 0 ||
-      session.get('visits.length') === 1 && session.get('firstVisit.isCliqz')) {
+    if (session.get('isEmpty')) {
       session.unloadRecord();
     }
     cliqz.sendTelemetry({
