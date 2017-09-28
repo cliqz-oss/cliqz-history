@@ -15,7 +15,7 @@ export default DS.Model.extend({
 
   isEmpty: Ember.computed('visits', 'firstVisit.isCliqz', function() {
     return this.get('visits.length') === 0 ||
-      this.get('visits.length') === 1 && this.get('firstVisit.isCliqz')
+      (this.get('visits.length') === 1 && this.get('firstVisit.isCliqz'));
   }),
 
   logo: Ember.computed.alias('firstVisit.contact.logo'),
