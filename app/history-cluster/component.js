@@ -1,18 +1,20 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-	tagName: 'article',
-	classNames: ['cluster'],
+  tagName: 'article',
+  classNames: ['cluster'],
+  cliqz: Ember.inject.service('cliqz'),
 
-	setup: function() {
-		this.set('collapsed', !this.get('isSingleVisit'));
-	}.on('init'),
+  mainVisit: Ember.computed('visits', function() {
+    return this.get('visits').filter(visit => visit.get('isMain'))[0];
+  }),
 
-	isSingleVisit: Ember.computed.equal('visits.length', 1),
+  isSingleVisit: Ember.computed.equal('visits.length', 1),
 
-	actions: {
-		toggleCollapsedState: function() {
-			this.set('collapsed', !this.get('collapsed'));
-		}
-	}
+  actions: {
+    deleteCluster: function () {
+      const clusterIds = this.get('visits').mapBy('id');
+      this.get('cliqz').deleteVisits(clusterIds);
+    }
+  }
 });

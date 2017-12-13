@@ -154,6 +154,7 @@ export default Ember.Service.extend({
         isActive: false,
         tabIndex: null,
       })
+
     );
 
     // mark active tabs

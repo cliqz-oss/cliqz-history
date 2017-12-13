@@ -448,12 +448,8 @@ $color-active-border: #0078CA;
             text-decoration: none;
             line-height: 22px;
 
-            &.collapsed {
-              display:none;
-            }
-
-            &.visit:nth-of-type(1).collapsed {
-              display: block;
+            &:not(.clustered) {
+              opacity: 0.3;
             }
 
             &:hover {
@@ -607,15 +603,6 @@ $color-active-border: #0078CA;
 
           .cluster {
             position: relative;
-
-            .toggle-collapse {
-              border: 0;
-              background: 0;
-              position: absolute;
-              left: -5px;
-              top: 10px;
-              z-index: 999999;
-            }
           }
 
           .cluster:first-child .visit:nth-of-type(1) {

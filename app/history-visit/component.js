@@ -22,11 +22,16 @@ export default Ember.Component.extend({
 
   cliqz: Ember.inject.service(),
   classNames: ['visit'],
-  classNameBindings: ['isMarkedForDeletion:marked-for-deletion', 'collapsed:collapsed'],
+  classNameBindings: ['isMarkedForDeletion:marked-for-deletion', 'isMain:clustered'],
 
   href: Ember.computed.alias('model.url'),
   title: Ember.computed.alias('model.title'),
   isCliqz: Ember.computed.alias('model.isCliqz'),
+  isMain: Ember.computed.alias('model.isMain'),
+
+  visibleTitle: Ember.computed('title', function() {
+    return this.get('title') || this.get('href');
+  }),
 
   keyword: Ember.computed('model.url', function () {
     const url = this.get('model.url');

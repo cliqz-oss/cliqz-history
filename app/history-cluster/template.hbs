@@ -1,12 +1,4 @@
-{{#unless isSingleVisit}}
-	<button {{action "toggleCollapsedState"}} class="toggle-collapse">
-		{{#if collapsed}}
-		▶
-		{{else}}
-		▼
-		{{/if}}
-	</button>
-{{/unless}}
-{{#each visits as |visit|}}
-	{{history-visit model=visit collapsed=collapsed onDelete=onDelete}}
-{{/each}}
+{{history-visit model=mainVisit collapsed=collapsed onDelete=(action "deleteCluster")}}
+{{!-- #each visits as |visit i|}}
+	{{history-visit model=visit query=query collapsed=collapsed onDelete=(action "deleteCluster")}}
+{{/each --}}
