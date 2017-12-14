@@ -1,9 +1,7 @@
 import Ember from 'ember';
 
 function isURLShortener(url) {
-  // TODO make a complete list.
-  const SHORTENER_RE = /^([a-z0-9]+:([/]+)?)?(t\.co)\/.+$/i;
-  return !!url.match(SHORTENER_RE);
+  return !!url.match(SHORTENERS_RE);
 }
 
 function worthShowing(visit) {
@@ -19,7 +17,6 @@ function lookAlike(visit1, visit2) {
   // remove protocol, trailing "www." and hash (?)
   url1 = url1.replace(SCHEME_WWW_RE, '').replace(HASH_RE, '');
   url2 = url2.replace(SCHEME_WWW_RE, '').replace(HASH_RE, '');
-
   return url1 === url2;
 }
 
@@ -44,17 +41,14 @@ export default Ember.Component.extend({
     const clusters = [];
 
     this.get('visits').reduce((prevVisit, currVisit) => {
-      if (prevVisit === null) {
-        // create new cluster with currVisit as a head
+      if (prevVisit === null ||
+          worthShowing(prevVisit) && !lookAlike(prevVisit, currVisit)) {
+        // create new cluster for first or unique visits
         currentCluster = [currVisit];
         clusters.push(currentCluster);
-      } else if (!worthShowing(prevVisit) || lookAlike(prevVisit, currVisit)) {
+      } else {
         // add currVisit to current cluster as a new head
         currentCluster.push(currVisit);
-      } else {
-        // seal the current cluster and create a new one with currVisit as a head
-        currentCluster = [currVisit];
-        clusters.push(currentCluster);
       }
       return currVisit;
     }, null);
@@ -90,3 +84,46 @@ export default Ember.Component.extend({
     },
   }
 });
+
+const SHORTENERS = [
+  "amp.gs",
+  "bit.do",
+  "t.co",
+  "lnkd.in",
+  "db.tt",
+  "qr.ae",
+  "adf.ly",
+  "goo.gl",
+  "bitly.com",
+  "cur.lv",
+  "tinyurl.com",
+  "ow.ly",
+  "bit.ly",
+  "ity.im",
+  "q.gs",
+  "is.gd",
+  "po.st",
+  "bc.vc",
+  "twitthis.com",
+  "u.to",
+  "j.mp",
+  "buzurl.com",
+  "cutt.us",
+  "u.bb",
+  "yourls.org",
+  "x.co",
+  "prettylinkpro.com",
+  "scrnch.me",
+  "filoops.info",
+  "vzturl.com",
+  "qr.net",
+  "1url.com",
+  "tweez.me",
+  "v.gd",
+  "tr.im",
+  "link.zip.net",
+  "tinyarrows.com",
+  "youtu.be",
+].map(s => `(${s})`).join('|').replace(/\./g, '\\.');
+
+const SHORTENERS_RE = new RegExp(`^([a-z0-9]+:[/]*)?(${SHORTENERS})\\/[^/?#]+$`, 'gi');
