@@ -1,5 +1,25 @@
 import Ember from 'ember';
 
+function getQuery(url) {
+  try {
+    const details = new URL(url);
+    const searchParams = new URLSearchParams(details.search);
+    const queries = searchParams.getAll('q');
+    return queries[queries.length-1];
+  } catch (e) {
+    return '';
+  }
+}
+
+function normalize(url) {
+  // remove protocol, "www." and trailing "/"
+  const SCHEME_WWW_RE = /^([a-z0-9]+:([/]+)?)?(www\.)?/i;
+  const TRAILING_SLASH_RE = /^([^/]+)\/$/g;
+  return url
+    .replace(SCHEME_WWW_RE, '')
+    .replace(TRAILING_SLASH_RE, '$1');
+}
+
 function isURLShortener(url) {
   return !!url.match(SHORTENERS_RE);
 }
@@ -10,14 +30,11 @@ function worthShowing(visit) {
 }
 
 function lookAlike(visit1, visit2) {
-  const SCHEME_WWW_RE = /^([a-z0-9]+:([/]+)?)?(www\.)?/i;
-  const HASH_RE = /#[^#]+$/;
-  let url1 = visit1.get('url');
-  let url2 = visit2.get('url');
-  // remove protocol, trailing "www." and hash (?)
-  url1 = url1.replace(SCHEME_WWW_RE, '').replace(HASH_RE, '');
-  url2 = url2.replace(SCHEME_WWW_RE, '').replace(HASH_RE, '');
-  return url1 === url2;
+  let url1 = normalize(visit1.get('url'));
+  let url2 = normalize(visit2.get('url'));
+  let keyword1 = normalize(getQuery(visit1.get('url')) || '');
+
+  return url1 === url2 || visit1.get('isCliqz') && keyword1 === url2;
 }
 
 export default Ember.Component.extend({
@@ -37,21 +54,34 @@ export default Ember.Component.extend({
   }),
 
   clusters: Ember.computed('visits', function() {
-    let currentCluster = null;
-    const clusters = [];
+    let lastNumberOfClusters = 0;
 
-    this.get('visits').reduce((prevVisit, currVisit) => {
-      if (prevVisit === null ||
-          worthShowing(prevVisit) && !lookAlike(prevVisit, currVisit)) {
-        // create new cluster for first or unique visits
-        currentCluster = [currVisit];
-        clusters.push(currentCluster);
-      } else {
-        // add currVisit to current cluster as a new head
-        currentCluster.push(currVisit);
-      }
-      return currVisit;
-    }, null);
+    // start with a list of clusters consisting of single visits...
+    let clusters = this.get('visits').map(visit => [visit]);
+
+    // ...and keep merging them until nothing can be merged anymore.
+    while (lastNumberOfClusters !== clusters.length) {
+      lastNumberOfClusters = clusters.length;
+
+      clusters = clusters.reduce((newClusters, nextCluster) => {
+        if (newClusters.length === 0) {
+          newClusters.push(nextCluster);
+          return newClusters;
+        }
+
+        const prevCluster = newClusters[newClusters.length - 1];
+        const prevHead = prevCluster[prevCluster.length - 1];
+        const nextHead = nextCluster[nextCluster.length - 1];
+        if (!worthShowing(prevHead) || lookAlike(prevHead, nextHead)) {
+          // clusters seem to be similar, merge them into one
+          prevCluster.push(...nextCluster);
+        } else {
+          // nextCluster seems to be independent, push it to the list
+          newClusters.push(nextCluster);
+        }
+        return newClusters;
+      }, []);
+    }
 
     // mark clusters' heads
     clusters.forEach(cluster => cluster[cluster.length - 1].set('isMain', true));
@@ -68,9 +98,6 @@ export default Ember.Component.extend({
   hasNoSortedVisits: Ember.computed.equal('sortedVisits.length', 0),
 
   actions: {
-    deleteVisit(visit) {
-      this.get('history').deleteVisit(visit.get('id'));
-    },
     deleteSession() {
       this.$().fadeOut(500, function() {
         this.get('history').deleteSession(this.get('model.id'));

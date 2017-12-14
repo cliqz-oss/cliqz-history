@@ -12,7 +12,7 @@ const getDetails = url => {
 };
 
 const isGoogle = hostname => {
-  return /^(www\.)?google(\.[a-z]{2,3}){1,2}$/.test(hostname);
+  return /^(www\.)?google(\.[a-z]{2,3}){1,2}$/i.test(hostname);
 };
 
 export default Ember.Component.extend({
@@ -22,7 +22,7 @@ export default Ember.Component.extend({
 
   cliqz: Ember.inject.service(),
   classNames: ['visit'],
-  classNameBindings: ['isMarkedForDeletion:marked-for-deletion', 'isMain:clustered'],
+  classNameBindings: ['isMarkedForDeletion:marked-for-deletion', 'isMain:cluster-head'],
 
   href: Ember.computed.alias('model.url'),
   title: Ember.computed.alias('model.title'),

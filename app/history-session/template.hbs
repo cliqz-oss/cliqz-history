@@ -1,6 +1,6 @@
 <div class="visits">
   {{#each clusters as |clusterVisits|}}
-	{{history-cluster query=query visits=clusterVisits logoclass="big" hasNoSortedVisits=hasNoSortedVisits onDelete=(action "deleteVisit")}}
+	{{history-cluster query=query visits=clusterVisits hasNoSortedVisits=hasNoSortedVisits}}
   {{/each}}
 
   <button class="delete-session-btn" {{action "deleteSession"}}
