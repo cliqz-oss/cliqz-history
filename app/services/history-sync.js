@@ -154,6 +154,7 @@ export default Ember.Service.extend({
         isActive: false,
         tabIndex: null,
       })
+
     );
 
     // mark active tabs
@@ -217,12 +218,7 @@ export default Ember.Service.extend({
       sessions.pushObject(session);
     });
 
-    return sessions.uniqBy('id').filter((session) => {
-      const firstVisit = session.get('firstVisit');
-      // filter out sessions containing only single cliqz search without any visits
-      return firstVisit.getWithDefault('url', '').indexOf('https://cliqz.com/search?q=') !== 0 ||
-        session.get('visits').content.length > 1;
-    });
+    return sessions.uniqBy('id');
   },
 
   fetch(params) {

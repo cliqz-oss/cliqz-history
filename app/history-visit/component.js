@@ -12,7 +12,7 @@ const getDetails = url => {
 };
 
 const isGoogle = hostname => {
-  return /^(www\.)?google(\.[a-z]{2,3}){1,2}$/.test(hostname);
+  return /^(www\.)?google(\.[a-z]{2,3}){1,2}$/i.test(hostname);
 };
 
 export default Ember.Component.extend({
@@ -22,11 +22,13 @@ export default Ember.Component.extend({
 
   cliqz: Ember.inject.service(),
   classNames: ['visit'],
-  classNameBindings: ['isMarkedForDeletion:marked-for-deletion'],
+  classNameBindings: ['isMarkedForDeletion:marked-for-deletion', 'isMain:cluster-head'],
 
   href: Ember.computed.alias('model.url'),
   title: Ember.computed.alias('model.title'),
   isCliqz: Ember.computed.alias('model.isCliqz'),
+  isMain: Ember.computed.alias('model.isMain'),
+  visibleTitle: Ember.computed.or('title', 'href'),
 
   keyword: Ember.computed('model.url', function () {
     const url = this.get('model.url');
@@ -61,9 +63,6 @@ export default Ember.Component.extend({
 
   setup: function() {
     this.set("isMarkedForDeletion", false);
-    if (this.$()) {
-      this.$().css('display', 'block');
-    }
   }.on('didUpdateAttrs'),
 
   actions: {
@@ -87,9 +86,9 @@ export default Ember.Component.extend({
     },
     deleteVisit() {
       const model = this.get('model');
-      this.$().fadeOut(function () {
+      this.$().fadeOut(() => {
         this.get('onDelete')(model);
-      }.bind(this));
+      });
     },
     markForDeletion() {
       this.set("isMarkedForDeletion", true);
