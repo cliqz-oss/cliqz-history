@@ -28,10 +28,7 @@ export default Ember.Component.extend({
   title: Ember.computed.alias('model.title'),
   isCliqz: Ember.computed.alias('model.isCliqz'),
   isMain: Ember.computed.alias('model.isMain'),
-
-  visibleTitle: Ember.computed('title', function() {
-    return this.get('title') || this.get('href');
-  }),
+  visibleTitle: Ember.computed.or('title', 'href'),
 
   keyword: Ember.computed('model.url', function () {
     const url = this.get('model.url');
