@@ -61,6 +61,12 @@ export default Ember.Component.extend({
     this.actions.open.call(this);
   },
 
+  contextMenu(e) {
+    if (this.get('isCliqz')) {
+      e.preventDefault();
+    }
+  },
+
   setup: function() {
     this.set("isMarkedForDeletion", false);
   }.on('didUpdateAttrs'),
