@@ -1,5 +1,23 @@
 import Ember from 'ember';
 
+const storage = {
+  getItem(key) {
+    try {
+      localStorage.getItem(key);
+    } catch (e) {
+      return 0;
+    }
+  },
+
+  setItem(key, value) {
+    try {
+      localStorage.getItem(key, value);
+    } catch (e) {
+      return;
+    }
+  }
+};
+
 export default Ember.Component.extend({
   history: Ember.inject.service('history-sync'),
 
@@ -18,8 +36,8 @@ export default Ember.Component.extend({
   setup: function() {
     // Show feedback automatically after history UI has been seen
     // more than 5 times and if user haven't voted before
-    if(localStorage.getItem('nShowTimes') >= 5
-        && !localStorage.getItem('feedbackVoted')) {
+    if(storage.getItem('nShowTimes') >= 5
+        && !storage.getItem('feedbackVoted')) {
       this.actions.startFeedback.call(this);
     }
   }.on('init'),
@@ -35,7 +53,7 @@ export default Ember.Component.extend({
 
   actions: {
     startFeedback() {
-      if (!localStorage.getItem('feedbackVoted')) {
+      if (!storage.getItem('feedbackVoted')) {
         this.set('currentFeedbackStep', 1);
       } else {
         this.set('currentFeedbackStep', 4);
@@ -46,7 +64,7 @@ export default Ember.Component.extend({
         target: 'history_tool',
         vote: 'up'
       });
-      localStorage.setItem('feedbackVoted', 'up');
+      storage.setItem('feedbackVoted', 'up');
       this.set('currentFeedbackStep', 2);
     },
     startNegativeFeedback() {
@@ -54,14 +72,14 @@ export default Ember.Component.extend({
         target: 'history_tool',
         vote: 'down'
       });
-      localStorage.setItem('feedbackVoted', 'down');
+      storage.setItem('feedbackVoted', 'down');
       this.set('currentFeedbackStep', 2);
     },
     submitComments(comments) {
       if (comments.trim()) {
         this.get('history').sendUserFeedback({
           target: 'history_tool',
-          vote: localStorage.getItem('feedbackVoted'),
+          vote: storage.getItem('feedbackVoted'),
           comments: comments.trim(),
         });
       }

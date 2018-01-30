@@ -69,7 +69,11 @@ export default Ember.Route.extend({
       type: 'history',
       action: 'show',
     });
-    localStorage.setItem('nShowTimes', parseInt(localStorage.getItem('nShowTimes'), 10) + 1);
+    try {
+      localStorage.setItem('nShowTimes', parseInt(localStorage.getItem('nShowTimes'), 10) + 1);
+    } catch (e) {
+      // do nothing
+    }
   },
 
   deactivate() {
