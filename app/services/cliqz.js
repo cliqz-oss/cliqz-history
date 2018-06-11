@@ -1,5 +1,9 @@
+/* global chrome */
+
 import Ember from 'ember';
-import Spanan from 'npm:spanan';
+import spanan from 'npm:spanan';
+
+const Spanan = spanan.default;
 
 export default Ember.Service.extend({
   historySync: Ember.inject.service('history-sync'),
@@ -7,15 +11,15 @@ export default Ember.Service.extend({
   init() {
     this._super(...arguments);
 
-    const history = new Spanan(({ uuid, functionName, args }) => {
-      const message = JSON.stringify({
+    const history = new Spanan(({ uuid, action, args }) => {
+      const message = {
         target: 'cliqz',
         module: 'history',
-        action: functionName,
+        action,
         requestId: uuid,
         args,
-      });
-      window.postMessage(message, '*');
+      };
+      chrome.runtime.sendMessage(message);
     });
     const historyProxy = history.createProxy();
 
@@ -30,15 +34,15 @@ export default Ember.Service.extend({
     this.openUrl = historyProxy.openUrl;
     this.selectTabAtIndex = historyProxy.selectTabAtIndex;
 
-    const core = new Spanan(({ uuid, functionName, args }) => {
-      const message = JSON.stringify({
+    const core = new Spanan(({ uuid, action, args }) => {
+      const message = {
         target: 'cliqz',
         module: 'core',
-        action: functionName,
+        action,
         requestId: uuid,
         args,
-      });
-      window.postMessage(message, '*');
+      };
+      chrome.runtime.sendMessage(message);
     });
     const coreProxy = core.createProxy();
 
@@ -49,32 +53,18 @@ export default Ember.Service.extend({
     this.openFeedbackPage = coreProxy.openFeedbackPage;
 
 
-    window.addEventListener("message", ev => {
-      let message = {};
-
-      try {
-        message = JSON.parse(ev.data);
-      } catch (e) {
-        // non CLIQZ or invalid message should be ignored
-      }
-
-      if(message.action === "updateHistoryUrls") {
+    chrome.runtime.onMessage.addListener(message => {
+      if(message.action === "updateHistoryUrls" && message.message) {
         this.get('historySync').updateHistoryUrls(message.message.urls);
       }
 
-      if (message.type === "response") {
+      if (message.response) {
         const spananMessage = {
           uuid: message.requestId,
-          returnedValue: message.response
+          response: message.response
         };
-
-        if (core.dispatch(spananMessage)) {
-          return;
-        }
-
-        if (history.dispatch(spananMessage)) {
-          return;
-        }
+        history.handleMessage(spananMessage);
+        core.handleMesssage(spananMessage);
       }
     });
   },
