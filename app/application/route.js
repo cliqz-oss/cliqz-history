@@ -21,6 +21,7 @@ export default Ember.Route.extend({
         const lang = chrome.i18n.getMessage('lang_code') || 'en';
         i18n.set('locale', lang);
         moment.setLocale(lang);
+        document.title = i18n.t('history.tab-title');
         resolve();
       });
     });
