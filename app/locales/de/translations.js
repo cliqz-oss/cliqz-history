@@ -106,7 +106,8 @@ export default {
     "send-us-feedback": "Feedback schicken"
   },
   history: {
-    "tab-title": "Chronik",
+    "tab-title": "Cliqz Chronik",
+    "history-title": "Chronik",
     "btn-clear-all-label": "Gesamte Chronik löschen...",
     "search-placeholder": "Chronik durchsuchen",
     "delete-this-page": "Diese Seite löschen",

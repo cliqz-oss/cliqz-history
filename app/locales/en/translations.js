@@ -106,7 +106,8 @@ export default {
     "send-us-feedback": "Send us feedback"
   },
   history: {
-    "tab-title": "History",
+    "tab-title": "Cliqz History",
+    "history-title": "History",
     "btn-clear-all-label": "Clear Recent History...",
     "search-placeholder": "Search History",
     "delete-this-page": "Delete this page",

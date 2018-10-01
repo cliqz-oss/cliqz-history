@@ -64,7 +64,6 @@ export default Ember.Route.extend({
 
   activate() {
     this.set('previousTitle', document.title);
-    //document.title = this.get('i18n').t('history.tab-title');
     this.get('cliqz').sendTelemetry({
       type: 'history',
       action: 'show',
