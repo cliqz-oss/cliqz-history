@@ -50,7 +50,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-    ENV.rootURL = 'resource://cliqz/cliqz-history/';
+    ENV.rootURL = '';
   }
 
   return ENV;
