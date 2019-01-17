@@ -30,13 +30,6 @@ function createSpananForModule(moduleName) {
     }
   });
 
-  chrome.runtime.onMessage.addListener(
-    ({ requestId, response }) => spanan.handleMessage({
-      uuid: requestId,
-      response,
-    })
-  );
-
   return spanan;
 }
 
@@ -66,5 +59,20 @@ export default Ember.Service.extend({
     this.redoQuery = coreProxy.redoQuery;
     this.sendTelemetry = coreProxy.sendTelemetry;
     this.openFeedbackPage = coreProxy.openFeedbackPage;
+
+    chrome.runtime.onMessage.addListener((message) => {
+      if(message.action === "updateHistoryUrls" && message.message) {
+        this.get('historySync').updateHistoryUrls(message.message.urls);
+      }
+  
+      if (message.response) {
+        const spananMessage = {
+          uuid: message.requestId,
+          response: message.response
+        };
+        history.handleMessage(spananMessage);
+        core.handleMesssage(spananMessage);
+      }
+    });
   },
 });
