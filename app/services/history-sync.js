@@ -1,3 +1,5 @@
+/* global chrome */
+
 import Ember from 'ember';
 
 export default Ember.Service.extend({
@@ -6,6 +8,7 @@ export default Ember.Service.extend({
 
   limit: 100,
   latestFrameStartsAt: Infinity,
+  rootUrl: chrome.runtime.getURL('/'),
 
   setup: function () {
     this.set('isRunning', false);
@@ -70,7 +73,9 @@ export default Ember.Service.extend({
       .filter(domain => !!domain)
       .map(domain => {
         const contact = history.domains[domain];
-        const messages = contact.visits.map(message => {
+        const messages = contact.visits
+        .filter(visit => visit.url.indexOf(this.get('rootUrl')) !== 0)
+        .map(message => {
           return {
             id: message.lastVisitedAt,
             type: "history-message",
@@ -194,7 +199,8 @@ export default Ember.Service.extend({
   updateSessions(history) {
     const store = this.get('store');
     const visits = Object.keys(history.domains)
-      .map(domain => history.domains[domain].visits)
+      .map(domain => history.domains[domain].visits
+      .filter(visit => visit.url.indexOf(this.get('rootUrl')) !== 0))
       .reduce((all, urls) => all.concat(urls), []);
     const sessions = [];
 
