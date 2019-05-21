@@ -1,0 +1,43 @@
+# Node.js
+# Build a general Node.js project with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '6.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm config set spin false
+    npm install -g phantomjs-prebuilt
+    phantomjs --version
+    yarn install
+  displayName: 'Prepare'
+
+- script:
+    npm test
+  displayName: 'Test'
+
+- script: |
+    npm run build
+    npm pack
+  displayName: 'Build'
+
+- task: GithubRelease@0 
+  displayName: 'Create GitHub Release'      
+  inputs:
+    githubConnection: joseph-cliqz
+    repositoryName: '$(Build.repositoryName)'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'manual' 
+    tag: '$(Build.BuildNumber)'          
+    assets: '$(Build.ArtifactStagingDirectory)/*.tgz'
