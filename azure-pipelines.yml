@@ -32,6 +32,11 @@ steps:
     npm pack
   displayName: 'Build'
 
+- task: CopyFiles@2
+  inputs:
+    contents: '**/cliqz-history*.tgz'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'  
+
 - task: GithubRelease@0 
   condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
   displayName: 'Create GitHub Release'      
