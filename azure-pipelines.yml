@@ -4,6 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
+- refs/tags/*
 - master
 
 pool:
@@ -31,13 +32,20 @@ steps:
     npm pack
   displayName: 'Build'
 
+- task: CopyFiles@2
+  inputs:
+    contents: '**/cliqz-history*.tgz'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'  
+
 - task: GithubRelease@0 
+  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
   displayName: 'Create GitHub Release'      
   inputs:
-    githubConnection: joseph-cliqz
-    repositoryName: '$(Build.repositoryName)'
-    action: 'create'
+    gitHubConnection: joseph-cliqz
+    repositoryName: '$(Build.Repository.Name)'
+    action: 'edit'
     target: '$(Build.SourceVersion)'
-    tagSource: 'manual' 
-    tag: '$(Build.BuildNumber)'          
+    tagSource: 'auto'
+    tag: '$(Build.SourceBranchName)'
     assets: '$(Build.ArtifactStagingDirectory)/*.tgz'
+    isPreRelease: true
