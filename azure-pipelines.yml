@@ -35,9 +35,9 @@ steps:
   displayName: 'Create GitHub Release'      
   inputs:
     gitHubConnection: joseph-cliqz
-    repositoryName: '$(Build.repositoryName)'
+    repositoryName: '$(Build.Repository.Name)'
     action: 'create'
     target: '$(Build.SourceVersion)'
-    tagSource: 'manual' 
-    tag: '$(Build.BuildNumber)'          
+    tagSource: 'auto'
     assets: '$(Build.ArtifactStagingDirectory)/*.tgz'
+    isPreRelease: true
