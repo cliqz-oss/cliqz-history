@@ -4,6 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
+- refs/tags/*
 - master
 
 pool:
@@ -36,7 +37,7 @@ steps:
   inputs:
     gitHubConnection: joseph-cliqz
     repositoryName: '$(Build.Repository.Name)'
-    action: 'create'
+    action: 'edit'
     target: '$(Build.SourceVersion)'
     tagSource: 'auto'
     assets: '$(Build.ArtifactStagingDirectory)/*.tgz'
