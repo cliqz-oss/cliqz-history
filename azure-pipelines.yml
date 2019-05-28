@@ -33,6 +33,7 @@ steps:
   displayName: 'Build'
 
 - task: GithubRelease@0 
+  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
   displayName: 'Create GitHub Release'      
   inputs:
     gitHubConnection: joseph-cliqz
@@ -40,5 +41,6 @@ steps:
     action: 'edit'
     target: '$(Build.SourceVersion)'
     tagSource: 'auto'
+    tag: '$(Build.SourceBranchName)'
     assets: '$(Build.ArtifactStagingDirectory)/*.tgz'
     isPreRelease: true
