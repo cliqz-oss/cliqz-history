@@ -466,10 +466,8 @@ $color-active-border: #0078CA;
 
             em {
               color: $color-black;
-              border-radius: 3px;
-              background-color: $color-highlight;
-              padding: 0 3px;
-              box-shadow: 0 1px 1px $color-highlight-shadow;
+              font-style: normal;
+              font-weight: 600;
             }
 
             & > div {
