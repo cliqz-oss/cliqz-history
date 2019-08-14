@@ -1,36 +1,26 @@
-/* global chrome */
+/* global browser, Proxy */
 
 import Ember from 'ember';
-import spanan from 'npm:spanan';
 
-const Spanan = spanan.default;
-
-function createSpananForModule(moduleName) {
-  const spanan = new Spanan(({ uuid, action, args }) => {
-    const message = {
-      module: moduleName,
-      action,
-      requestId: uuid,
-      args
-    };
-    const onResponse = (response) => {
-      if (!response) {
-        return;
-      }
-      spanan.handleMessage({
-        uuid,
-        response: response.response
-      });
-    };
-
-    const promise = chrome.runtime.sendMessage(message, onResponse);
-
-    if (promise && promise.then) {
-      promise.then(onResponse);
-    }
+function createActionWrapperForModule(module) {
+  const actionHandler = (action, ...args) => browser.runtime.sendMessage({
+    module,
+    action,
+    args,
   });
 
-  return spanan;
+  // Return a proxy so that people can call `module.actionName(...args)` instead
+  // of `module.action('actionName', ...args)`. This is not strictly needed but
+  // modules are expecting this API.
+  return new Proxy({}, {
+    get: (obj, prop) => {
+      if (prop === 'action') {
+        return actionHandler;
+      }
+
+      return actionHandler.bind(obj, prop);
+    },
+  });
 }
 
 export default Ember.Service.extend({
@@ -39,8 +29,7 @@ export default Ember.Service.extend({
   init() {
     this._super(...arguments);
 
-    const history = createSpananForModule('history');
-    const historyProxy = history.createProxy();
+    const historyProxy = createActionWrapperForModule('history');
     this.deleteVisit = historyProxy.deleteVisit;
     this.deleteVisits = historyProxy.deleteVisits;
     this.showHistoryDeletionPopup = historyProxy.showHistoryDeletionPopup;
@@ -52,26 +41,17 @@ export default Ember.Service.extend({
     this.openUrl = historyProxy.openUrl;
     this.selectTabAtIndex = historyProxy.selectTabAtIndex;
 
-    const core = createSpananForModule('core');
-    const coreProxy = core.createProxy();
+    const coreProxy = createActionWrapperForModule('core');
     this.getCliqzStatus = coreProxy.status;
     this.queryCliqz = coreProxy.queryCliqz;
     this.redoQuery = coreProxy.redoQuery;
     this.sendTelemetry = coreProxy.sendTelemetry;
     this.openFeedbackPage = coreProxy.openFeedbackPage;
 
-    chrome.runtime.onMessage.addListener((message) => {
-      if(message.action === "updateHistoryUrls" && message.message) {
-        this.get('historySync').updateHistoryUrls(message.message.urls);
-      }
-  
-      if (message.response) {
-        const spananMessage = {
-          uuid: message.requestId,
-          response: message.response
-        };
-        history.handleMessage(spananMessage);
-        core.handleMesssage(spananMessage);
+    browser.runtime.onMessage.addListener((message) => {
+      if(message.action === "updateHistoryUrls") {
+        const { urls } = message.args[0];
+        this.get('historySync').updateHistoryUrls(urls);
       }
     });
   },
