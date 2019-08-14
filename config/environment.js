@@ -5,7 +5,7 @@ module.exports = function(environment) {
   let ENV = {
     modulePrefix: 'cliqz-history',
     environment,
-    rootURL: '/modules/cliqz-history/',
+    rootURL: '/',
     locationType: 'hash',
     EmberENV: {
       FEATURES: {
